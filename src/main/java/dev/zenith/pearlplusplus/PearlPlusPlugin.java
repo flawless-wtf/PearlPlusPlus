@@ -1,18 +1,18 @@
-package dev.zenith.pearlplus;
+package dev.zenith.pearlplusplus;
 
 import com.zenith.plugin.api.PluginAPI;
 import com.zenith.plugin.api.Plugin;
 import com.zenith.plugin.api.ZenithProxyPlugin;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import dev.zenith.pearlplus.command.*;
-import dev.zenith.pearlplus.module.*;
+import dev.zenith.pearlplusplus.command.*;
+import dev.zenith.pearlplusplus.module.*;
 
 @Plugin(
-    id = "pearlplus",
+    id = "pearlplusplus",
     version = BuildConstants.VERSION,
     description = "Slightly better pearl loading module.",
-    url = "https://github.com/duccss/pearlplus/",
-    authors = {"duccss"},
+    url = "https://github.com/flawless-wtf/PearlPlusPlus",
+    authors = {"flawless", "duccss"},
     mcVersions = {"1.21.0", "1.21.4", "1.21.5", "1.21.7", "1.21.8", "1.21.10"}
 )
 

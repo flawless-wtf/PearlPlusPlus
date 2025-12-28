@@ -1,4 +1,4 @@
-package dev.zenith.pearlplus;
+package dev.zenith.pearlplusplus;
 
 // The constants are replaced before compilation
 public class BuildConstants {

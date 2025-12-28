@@ -1,16 +1,15 @@
-package dev.zenith.pearlplus.command;
+package dev.zenith.pearlplusplus.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.zenith.command.api.Command;
 import com.zenith.command.api.CommandCategory;
 import com.zenith.command.api.CommandContext;
 import com.zenith.command.api.CommandUsage;
-import com.zenith.discord.Embed;
 import com.zenith.feature.api.minetools.MinetoolsApi;
 import com.zenith.feature.api.minetools.model.MinetoolsUuidResponse;
-import dev.zenith.pearlplus.module.AutoLoadModule;
-import dev.zenith.pearlplus.module.AutoDetectModule;
-import dev.zenith.pearlplus.module.PearlManager;
+import dev.zenith.pearlplusplus.module.AutoLoadModule;
+import dev.zenith.pearlplusplus.module.AutoDetectModule;
+import dev.zenith.pearlplusplus.logic.PearlManager;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +21,7 @@ import static com.zenith.command.brigadier.CustomStringArgumentType.getString;
 import static com.zenith.command.brigadier.CustomStringArgumentType.wordWithChars;
 import static com.zenith.command.brigadier.ToggleArgumentType.getToggle;
 import static com.zenith.command.brigadier.ToggleArgumentType.toggle;
-import static dev.zenith.pearlplus.PearlPlusPlugin.PLUGIN_CONFIG;
+import static dev.zenith.pearlplusplus.PearlPlusPlugin.PLUGIN_CONFIG;
 
 public class PearlPlusCommand extends Command {
     @Override
@@ -188,23 +187,58 @@ public class PearlPlusCommand extends Command {
                             boolean enabled = getToggle(c, "toggle");
                             PLUGIN_CONFIG.autoDetect.temporaryMode = enabled;
 
-                            AutoDetectModule module = MODULE.get(AutoDetectModule.class);
-                            module.onTemporaryModeToggle(enabled);
+//                            AutoDetectModule module = MODULE.get(AutoDetectModule.class);
+//                            module.onTemporaryModeToggle(enabled);
 
                             c.getSource().getEmbed()
                                     .title("PearlPlus Autodetect Temp Mode " + toggleStrCaps(enabled));
                             return 0;
-                        }))));
+                        }))))
+                .then(literal("area")
+                        .then(argument("state", toggle()).executes(c -> {
+                            boolean state = getToggle(c, "state");
+                            PLUGIN_CONFIG.autoDetect.area.enabled = state;
+                            c.getSource().getEmbed()
+                                    .title("PearlPlus Area Filter " + toggleStrCaps(state))
+                                    .description(state ? "Pearls will only register inside the defined box." : "Pearls will register anywhere.");
+                            return 0;
+                        }))
 
-        builder.then(literal("distancecheck")
-                .then(argument("toggle", toggle()).executes(c -> {
-                    boolean enabled = getToggle(c, "toggle");
-                    PLUGIN_CONFIG.autoDetect.distanceCheck = enabled;
+                        .then(argument("x1", integer())
+                            .then(argument("y1", integer())
+                                    .then(argument("z1", integer())
+                                            .then(argument("x2", integer())
+                                                    .then(argument("y2", integer())
+                                                            .then(argument("z2", integer()).executes(c -> {
+                                                                int x1 = getInteger(c, "x1");
+                                                                int y1 = getInteger(c, "y1");
+                                                                int z1 = getInteger(c, "z1");
+                                                                int x2 = getInteger(c, "x2");
+                                                                int y2 = getInteger(c, "y2");
+                                                                int z2 = getInteger(c, "z2");
 
-                    c.getSource().getEmbed()
-                            .title("PearlPlus Distance Check " + toggleStrCaps(enabled));
-                    return 0;
-                })));
+                                                                // Set the bounding box in config
+                                                                PLUGIN_CONFIG.autoDetect.area.set(x1, y1, z1, x2, y2, z2);
+
+                                                                c.getSource().getEmbed()
+                                                                        .title("AutoDetect Area Updated")
+                                                                        .description(String.format(
+                                                                                "Pearls will only register if they land between:\n" +
+                                                                                        "**Point A**: %d, %d, %d\n**Point B**: %d, %d, %d",
+                                                                                x1, y1, z1, x2, y2, z2
+                                                                        ));
+                                                                return 0;
+                                                            }))))))));
+
+//        builder.then(literal("distancecheck")
+//                .then(argument("toggle", toggle()).executes(c -> {
+//                    boolean enabled = getToggle(c, "toggle");
+//                    PLUGIN_CONFIG.autoDetect.distanceCheck = enabled;
+//
+//                    c.getSource().getEmbed()
+//                            .title("PearlPlus Distance Check " + toggleStrCaps(enabled));
+//                    return 0;
+//                })));
 
         builder.then(literal("autodefault")
                 .then(argument("toggle", toggle()).executes(c -> {
